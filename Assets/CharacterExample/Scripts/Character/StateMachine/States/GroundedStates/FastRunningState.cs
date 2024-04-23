@@ -1,15 +1,15 @@
-public class RunningState : GroundedState
+public class FastRunningState : GroundedState
 {
     private readonly RunningStateConfig _config;
 
-    public RunningState(IStateSwitcher stateSwitcher, StateMachineData data, Character character) : base(stateSwitcher, data, character)
+    public FastRunningState(IStateSwitcher stateSwitcher, StateMachineData data, Character character) : base(stateSwitcher, data, character)
         => _config = character.Config.RunningStateConfig;
 
     public override void Enter()
     {
         base.Enter();
 
-        Data.Speed = _config.Speed;
+        Data.Speed = _config.Speed * _config.FastSpeedRate;
 
         View.StartRunning();
     }
@@ -28,10 +28,7 @@ public class RunningState : GroundedState
         if (IsHorizontalInputZero())
             StateSwitcher.SwitchState<IdlingState>();
         
-        if (IsFastMoving())
-            StateSwitcher.SwitchState<FastRunningState>();
-        
-        if (IsWalking())
-            StateSwitcher.SwitchState<WalkingState>();
+        if (IsFastMoving() == false)
+            StateSwitcher.SwitchState<RunningState>();
     }
 }
